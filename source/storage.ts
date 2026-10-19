@@ -6,17 +6,23 @@ export async function localRequest(path:string,options:RequestInit={}):Promise<R
   if(!Array.isArray(rows))throw Error("本机文稿格式无效，请先检查备份。");
   const method=options.method||"GET";
   if(method==="GET")return Response.json(rows);
+  if(path==="/api/volumes"&&method==="PUT"){
+   const {from,to}=JSON.parse(String(options.body));
+   if(typeof from!=="string"||typeof to!=="string"||!to.trim()||to.length>60)return Response.json({error:"卷名无效"},{status:400});
+   const updated=rows.map((row:any)=>row.volume===from?{...row,volume:to,updatedAt:new Date().toISOString()}:row);
+   localStorage.setItem(KEY,JSON.stringify(updated));return Response.json({ok:true});
+  }
   const id=path.split("/")[3];
   if(method==="DELETE"){
    localStorage.setItem(KEY,JSON.stringify(rows.filter((r:any)=>r.id!==id)));
    return Response.json({ok:true});
   }
   const data=JSON.parse(String(options.body));
-  if(!data.title?.trim()||!data.volume?.trim()||!data.content?.trim()||data.content.length>300000||!Number.isInteger(data.position)||data.position<1||data.position>999999||!["draft","published"].includes(data.status))return Response.json({error:"请填写标题、分卷、序号与正文，每章最多 30 万字符。"},{status:400});
+  if(!data||typeof data.title!=="string"||typeof data.volume!=="string"||typeof data.content!=="string"||!data.title.trim()||!data.volume.trim()||!data.content.trim()||data.title.length>120||data.volume.length>60||data.content.length>300000||!Number.isInteger(data.position)||data.position<1||data.position>999999||!["draft","published"].includes(data.status))return Response.json({error:"请填写标题、分卷、序号与正文，每章最多 30 万字符。"},{status:400});
   const previous=rows.find((r:any)=>r.id===id);
   if(method==="PUT"&&!previous)return Response.json({error:"未找到文章，请刷新书房后重试。"},{status:404});
   const now=new Date().toISOString();
-  const row={id:method==="POST"?crypto.randomUUID():id,title:data.title.trim(),volume:data.volume.trim(),content:data.content.trim(),status:data.status,position:data.position,createdAt:previous?.createdAt||now,updatedAt:now};
+  const row={id:method==="POST"?crypto.randomUUID():id,title:data.title.trim(),volume:data.volume.trim(),content:data.content.trim(),...(typeof data.html==='string'&&data.html.length<=2500000?{html:data.html}:{}),status:data.status,position:data.position,createdAt:previous?.createdAt||now,updatedAt:now};
   const next=[...rows.filter((r:any)=>r.id!==row.id),row].sort((a,b)=>a.position-b.position||a.createdAt.localeCompare(b.createdAt));
   localStorage.setItem(KEY,JSON.stringify(next));
   return Response.json(row,{status:method==="POST"?201:200});
