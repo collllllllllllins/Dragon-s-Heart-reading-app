@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --config source/vite.config.ts",
     "build": "vite build --config source/vite.config.ts",
-    "test": "node tests/selection.cjs"
+    "test": "node tests/selection.cjs && node tests/catalog.cjs"
   },
   "dependencies": {
     "react": "19.2.6",

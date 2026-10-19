@@ -53,4 +53,3 @@ export function highlightedHTML(html:string,notes:Annotation[]){
 }
 export function readAnnotations(id:string):Annotation[]{try{const data=JSON.parse(localStorage.getItem('longxin-notes-'+id)||'[]');return Array.isArray(data)?data.filter(n=>n&&typeof n.body==='string'&&typeof n.quote==='string'&&typeof n.id==='string'):[];}catch{return [];}}
 export function writeAnnotations(id:string,notes:Annotation[]){localStorage.setItem('longxin-notes-'+id,JSON.stringify(notes));}
-export function sameVolume<T extends {volume:string}>(rows:T[],volume:string){return rows.filter(c=>c.volume===volume);}

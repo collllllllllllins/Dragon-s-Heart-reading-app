@@ -25,3 +25,22 @@
 .select-mode-toggle[aria-pressed="true"]{background:#cebb663d;color:var(--accent,#85713c)}
 .reader-footnote{gap:6px;flex-wrap:wrap;align-items:center}
 .reader-footnote>span:last-child{margin-left:auto}
+.shelf-item-detail{font-size:10px;line-height:1.8;color:#76836b;display:block;margin-top:6px}
+.book-context{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:0 0 22px;color:#75816a;font-size:11px}
+.book-context button{border:1px solid #d8dfcd;border-radius:20px;padding:7px 12px;min-height:34px}
+.book-context button.current{background:#ebefdf;border-color:#9eaf8a;color:#35543c}
+.book-context p{flex-basis:100%;line-height:1.9;margin:4px 0}
+.classification-fields{display:grid;grid-template-columns:1fr 1.5fr 100px;gap:16px}
+.editor select{font:inherit;font-size:16px;color:inherit;background:transparent;border:0;border-bottom:1px solid #d8dfcd;padding:12px 0;width:100%}
+.classification-hint{font-size:11px;color:#7d866e;line-height:1.9;margin:-10px 0 0}
+.book-editor{width:min(520px,100%)}
+.book-editor-body{padding:26px 30px;overflow:auto;display:grid;gap:24px}
+.book-editor-body>label{display:grid;gap:12px;font-size:13px;color:#53664b}
+.book-editor-body>label>input{padding:12px;border:1px solid #d4dcc8;border-radius:3px;font-size:17px;width:100%;background:transparent}
+.book-editor fieldset{border:1px solid #d4dcc8;padding:18px;display:flex;flex-wrap:wrap;gap:12px}
+.book-editor legend{font-size:12px;color:#647458;padding:0 6px}
+.timeline-choice{display:flex;align-items:center;gap:9px;min-height:42px;padding:0 12px;border:1px solid #dce1d0;border-radius:3px;font-size:14px}
+.timeline-choice input{width:18px;height:18px;accent-color:#456245}
+.book-editor-body p{font-size:12px;color:#79836d;line-height:1.9;margin:0}
+.book-editor>footer{padding:18px 30px;border-top:1px solid #dce1d0;display:flex;justify-content:flex-end;gap:10px}
+@media(max-width:600px){.classification-fields{grid-template-columns:1fr 90px}.classification-fields>label:nth-child(2){grid-column:1 / -1;grid-row:2}.classification-hint{font-size:10px}.book-editor-body{padding:22px}.book-editor>footer{padding:18px 22px max(18px,env(safe-area-inset-bottom))}.hero-stat{flex-wrap:wrap}.book-context{font-size:10px}}

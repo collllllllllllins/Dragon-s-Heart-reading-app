@@ -24,7 +24,7 @@ const Reading=require(project+'/source/reading.tsx').default;
 const {selectSentenceAtPoint}=require(project+'/source/selection.ts');
 const click=(node,x=12,y=20)=>node.dispatchEvent(new MouseEvent('click',{bubbles:true,clientX:x,clientY:y,detail:1}));
 const swipe=(node)=>{for(const [type,key,x] of [['touchstart','touches',220],['touchend','changedTouches',90]]){const event=new Event(type,{bubbles:true});Object.defineProperty(event,key,{value:[{clientX:x,clientY:100}]});node.dispatchEvent(event);}};
-const chapter={id:'test',title:'选区回归',volume:'元年',content:'第一句。第二句有加粗文字！第三句。',html:'<p>第一句。第二句有<strong>加粗</strong>文字！第三句。</p>',position:1,status:'published',createdAt:'2026-10-19',updatedAt:'2026-10-19'};
+const chapter={id:'test',title:'选区回归',volume:'测试分卷',timeline:'元年',bookId:'test-book',content:'第一句。第二句有加粗文字！第三句。',html:'<p>第一句。第二句有<strong>加粗</strong>文字！第三句。</p>',position:1,status:'published',createdAt:'2026-10-19',updatedAt:'2026-10-19'};
 (async()=>{
  const app=createRoot(document.getElementById('app'));
  await act(async()=>{app.render(React.createElement(Reading,{chapter,chapters:[chapter],onClose(){},onOpen(){},onEdit(){}}));await new Promise(r=>setTimeout(r,15));});
