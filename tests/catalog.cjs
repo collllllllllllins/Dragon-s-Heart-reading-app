@@ -12,6 +12,7 @@ Object.defineProperty(document,'fonts',{value:{ready:Promise.resolve()}});
 for(const [key,value] of [['clientWidth',320],['clientHeight',500],['scrollWidth',320]])Object.defineProperty(HTMLElement.prototype,key,{get(){return value;}});
 HTMLElement.prototype.getBoundingClientRect=function(){return {left:0,top:0,width:320,height:500,right:320,bottom:500};};
 const React=localRequire('react'),{act}=React,{createRoot}=localRequire('react-dom/client');
+require.cache[project+'/source/cloud-client.ts']={id:project+'/source/cloud-client.ts',filename:project+'/source/cloud-client.ts',loaded:true,exports:{loadCloudClient:async()=>{throw Error('offline test');}}};
 const ReaderApp=require(project+'/source/reader-app.tsx').default;
 const {normalizeChapter,readCatalog,writeCatalog,sameBook,CATALOG_KEY}=require(project+'/source/catalog.ts');
 const {localRequest}=require(project+'/source/storage.ts');

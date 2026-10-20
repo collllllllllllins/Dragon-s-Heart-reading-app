@@ -27,3 +27,19 @@ source/ 保存源码，assets/ 和根目录 index.html 是已构建成品。需�
 ## 测试范围
 
 检查手机访问、左右翻页、字号、行距、纸色、时间轴下的分卷入口和同一浏览器中的进度恢复。删除网站数据可能导致本机文章丢失，请保留原稿并定期导出备份。
+
+## 云端第一阶段：作者账号与权限
+
+Supabase 项目：`ydauxndnzzmwqedpzuxz`。`source/public/cloud-config.json` 仅包含浏览器可用的项目 URL 和 publishable key；禁止放入 secret key、service_role 或数据库密码。
+
+当前阶段仅接入连通检查、邮箱密码登录、会话恢复、退出和作者名单核验。文章、分卷、批注与背景仍使用浏览器本机存储，尚未迁移或公开共享；界面会明确显示这一状态。登录不会触发本机数据迁移，退出也不会清除本机文稿。
+
+作者账号设置：
+
+1. 在 Supabase 项目的 Authentication → Users 中创建自己的站点用户，自行设置密码并确认邮箱（后台创建时可使用自动确认）。Supabase 管理后台账号与本项目 Auth 用户相互独立。
+2. 由项目管理员核对用户邮箱或 UUID，再将对应 `auth.users.id` 加入 `public.longxin_authors`。网页客户端没有修改作者名单的权限；不提供“首位注册者自动成为作者”的入口。
+3. 打开书房上方“作者登录”，使用站点邮箱和密码登录，检查“作者权限已核验”。
+
+`public.longxin_cloud_version()` 是无数据权限的连通探针。`longxin_authors` 启用 RLS，仅允许登录用户读取自己的名单记录。后续正文读写策略必须在数据库中检查作者名单，不能依赖页面按钮、缓存状态或 user_metadata。
+
+迁移脚本保存在 `supabase/migrations/`，文件版本与已应用的远端迁移历史对齐。依赖版本固定，并保留 package-lock.json。运行 `npm ci`、`npm run typecheck`、`npm test`、`npm run build` 后，把 build-output 的内容同步到仓库根目录部署。自动测试使用模拟 DOM；真实作者登录待账号创建后验证。
