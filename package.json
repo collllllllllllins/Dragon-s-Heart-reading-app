@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --config source/vite.config.ts",
     "build": "vite build --config source/vite.config.ts",
-    "test": "node tests/selection.cjs && node tests/catalog.cjs && node tests/cloud-auth.cjs",
+    "test": "node tests/selection.cjs && node tests/catalog.cjs && node tests/cloud-auth.cjs && node tests/novels.cjs",
     "typecheck": "tsc --noEmit --jsx react-jsx --module ESNext --moduleResolution bundler --target ES2022 --lib ES2022,DOM --skipLibCheck --esModuleInterop source/*.tsx source/*.ts"
   },
   "dependencies": {
@@ -20,6 +20,7 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.2",
+    "fake-indexeddb": "6.2.4",
     "jsdom": "30.1.3",
     "typescript": "5.9.3",
     "vite": "8.0.13"

@@ -1,6 +1,6 @@
 export type Book={id:string;name:string;timelines:string[]};
 export type Catalog={timelines:string[];books:Book[]};
-export type Chapter={id:string;title:string;timeline:string;bookId:string;volume:string;content:string;html?:string;status:'draft'|'published';position:number;createdAt:string;updatedAt:string};
+export type Chapter={id:string;title:string;timeline:string;bookId:string;volume:string;content:string;html?:string;format?:'visual-novel';novelHtml?:string;novelPath?:string;novelFileName?:string;entryTimelines?:string[];status:'draft'|'published';position:number;createdAt:string;updatedAt:string};
 export const CATALOG_KEY='longxin-catalog-v2';
 const DEFAULT_TIMELINES=['元年','一千','两千'];
 const validName=(value:unknown):value is string=>typeof value==='string'&&!!value.trim()&&value.trim().length<=60;
@@ -21,7 +21,7 @@ export function readCatalog(chapters:Chapter[]=[]):Catalog{
  let catalog:Catalog;
  try{const saved=localStorage.getItem(CATALOG_KEY);catalog=saved?normalizeCatalog(JSON.parse(saved)):{timelines:uniqueNames(JSON.parse(localStorage.getItem('longxin-volume-names-v1')||JSON.stringify(DEFAULT_TIMELINES))),books:[]};}
  catch{catalog={timelines:[...DEFAULT_TIMELINES],books:[]};}
- for(const chapter of chapters){const c=normalizeChapter(chapter);if(!catalog.timelines.includes(c.timeline))catalog.timelines.push(c.timeline);let book=catalog.books.find(b=>b.id===c.bookId);if(!book){book={id:c.bookId,name:c.volume,timelines:[]};catalog.books.push(book);}if(!book.timelines.includes(c.timeline))book.timelines.push(c.timeline);}
+ for(const chapter of chapters){const c=normalizeChapter(chapter);if(!catalog.timelines.includes(c.timeline))catalog.timelines.push(c.timeline);let book=catalog.books.find(b=>b.id===c.bookId);if(!book){book={id:c.bookId,name:c.volume,timelines:uniqueNames(c.entryTimelines)};catalog.books.push(book);}if(!book.timelines.includes(c.timeline))book.timelines.push(c.timeline);}
  return catalog;
 }
 export function writeCatalog(catalog:Catalog){localStorage.setItem(CATALOG_KEY,JSON.stringify(normalizeCatalog(catalog)));}

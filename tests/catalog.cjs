@@ -13,6 +13,7 @@ for(const [key,value] of [['clientWidth',320],['clientHeight',500],['scrollWidth
 HTMLElement.prototype.getBoundingClientRect=function(){return {left:0,top:0,width:320,height:500,right:320,bottom:500};};
 const React=localRequire('react'),{act}=React,{createRoot}=localRequire('react-dom/client');
 require.cache[project+'/source/cloud-client.ts']={id:project+'/source/cloud-client.ts',filename:project+'/source/cloud-client.ts',loaded:true,exports:{loadCloudClient:async()=>{throw Error('offline test');}}};
+require.cache[project+'/source/bundled-novels.ts']={id:project+'/source/bundled-novels.ts',filename:project+'/source/bundled-novels.ts',loaded:true,exports:{bundledChapters:[]}};
 const ReaderApp=require(project+'/source/reader-app.tsx').default;
 const {normalizeChapter,readCatalog,writeCatalog,sameBook,CATALOG_KEY}=require(project+'/source/catalog.ts');
 const {localRequest}=require(project+'/source/storage.ts');
@@ -27,6 +28,7 @@ let app;
 async function mount(){app=createRoot(document.getElementById('app'));await act(async()=>{app.render(React.createElement(ReaderApp));await tick();});}
 async function newChapter(title,timeline,volume){
  await act(async()=>{click(document.querySelector('.write-btn'));});
+ await act(async()=>{click(find('.novel-format-choice button','旧文稿'));});
  await change(document.querySelector('.editor input[placeholder="给这一章一个名字"]'),title);
  if(volume)await change(document.querySelector('.editor input[list="book-options"]'),volume);
  await change(document.querySelector('.editor select'),timeline);
@@ -78,7 +80,7 @@ async function importBackup(data){
  assert.equal(document.querySelectorAll('.toc button:not(.toc-edit)').length,2,'Reader excludes other books');
  assert(find('.toc button','一千'),'Reader shows the chapter timeline labels');
  await act(async()=>{click(document.querySelector('[aria-label="关闭面板"]'));click(document.querySelector('.page-controls button:last-child'));await tick();});
- assert.equal(document.querySelector('.chapter-start h1').textContent,'儿子的一千','Next chapter follows the original book across timelines');
+ assert.equal(document.querySelector('.novel-title').textContent,'儿子的一千','Next chapter follows the original book across timelines');
  assert(document.querySelector('.page-controls button:last-child').disabled,'Reading stops at the end of this book');
  await act(async()=>{click(document.querySelector('.reader-back'));});
  // Renaming the shared book changes both entrances while preserving its ID and notes.
@@ -94,7 +96,7 @@ async function importBackup(data){
  await act(async()=>{click(find('.site-header nav button','文稿'));});
  await act(async()=>{click(find('.backup-tools button','导出备份'));});
  const backup=JSON.parse(await blob.text());URL.createObjectURL=originalCreate;
- assert.equal(backup.schemaVersion,2);assert.equal(backup.chapters.length,3);assert.equal(backup.catalog.books.length,2);assert.deepEqual(backup.catalog.books.find(b=>b.id===sharedId).timelines,['元年','一千']);
+ assert.equal(backup.schemaVersion,3);assert.equal(backup.chapters.length,3);assert.equal(backup.catalog.books.length,2);assert.deepEqual(backup.catalog.books.find(b=>b.id===sharedId).timelines,['元年','一千']);
  await act(async()=>{app.unmount();});localStorage.clear();await mount();await importBackup(backup);
  assert.equal(rows().length,3);assert.equal(readCatalog(rows()).books.length,2);assert.equal(sameBook(rows(),sharedId).length,2);
  const imported=rows().find(c=>c.title===first.title);assert.notEqual(imported.id,first.id);assert(localStorage.getItem('longxin-notes-'+imported.id).includes('只保存一份批注'));
