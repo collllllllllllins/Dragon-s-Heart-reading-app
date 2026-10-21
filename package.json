@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --config source/vite.config.ts",
     "build": "vite build --config source/vite.config.ts",
-    "test": "node tests/selection.cjs && node tests/catalog.cjs && node tests/cloud-auth.cjs && node tests/novels.cjs",
+    "test": "node tests/selection.cjs && node tests/catalog.cjs && node tests/cloud-auth.cjs && node tests/novels.cjs && node tests/cloud-backup.cjs",
     "typecheck": "tsc --noEmit --jsx react-jsx --module ESNext --moduleResolution bundler --target ES2022 --lib ES2022,DOM --skipLibCheck --esModuleInterop source/*.tsx source/*.ts"
   },
   "dependencies": {
