@@ -1,10 +1,10 @@
 import {escapeHTML} from './format';
 import type {Chapter} from './catalog';
-export const NOVEL_MAX_BYTES=20000000;
+export const NOVEL_MAX_BYTES=25000000;
 const json=(value:unknown)=>JSON.stringify(value).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
 export function inspectNovel(source:string,fileName:string){
  if(!/<(?:!doctype\s+html|html)[\s>]/i.test(source))throw Error('请选择完整的 HTML 网页文件，图片应内嵌在文件中。');
- if(new TextEncoder().encode(source).length>NOVEL_MAX_BYTES)throw Error('每章最多 20 MB，请拆分为多个章节。');
+ if(new TextEncoder().encode(source).length>NOVEL_MAX_BYTES)throw Error('每章最多 25 MB，请拆分为多个章节。');
  const doc=new DOMParser().parseFromString(source,'text/html');
  const external=Array.from(doc.querySelectorAll('[src],link[href]')).filter(el=>{const value=el.getAttribute('src')||el.getAttribute('href')||'';return value&&!value.startsWith('data:')&&!value.startsWith('#');});
  if(external.length)throw Error('文件仍引用外部图片或脚本。请先导出为内嵌图片、样式和脚本的独立 HTML。');
