@@ -1,0 +1,20 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),ts=require('typescript');
+require.extensions['.ts']=(module,file)=>module._compile(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,file);
+let user={id:'author'},allowed=true,stored=[],fail=false;
+const fake={auth:{getUser:async()=>({data:{user},error:null})},from(table){
+ if(table==='longxin_authors')return {select:()=>({eq:()=>({maybeSingle:async()=>({data:allowed?{user_id:user.id}:null,error:null})})})};
+ assert.equal(table,'longxin_backups');let row;
+ const q={insert(value){row=value;return q;},select(columns){q.columns=columns;return q;},eq(key,value){if(key==='user_id')assert.equal(value,'author');return q;},order(key,options){assert.equal(key,'created_at');assert.equal(options.ascending,false);return q;},limit(n){assert.equal(n,5);assert(!q.columns.includes('payload'));return Promise.resolve({data:stored,error:null});},async single(){if(fail)return {error:{message:'network'},data:null};if(row){stored.push({id:'snapshot',...row});return {data:{id:'snapshot',created_at:'now'},error:null};}return {data:{payload:stored[0].payload},error:null};}};return q;
+}};
+const client=require('../source/cloud-client.ts');client.loadCloudClient=async()=>fake;
+const backup=require('../source/cloud-backup.ts');
+(async()=>{const payload={format:'longxin-backup-v1',chapters:[{novelHtml:'<html>作品</html>',annotations:[{body:'批注'}]}]};
+ assert.throws(()=>backup.validateBackup({format:'bad',chapters:[]}));
+ assert.throws(()=>backup.validateBackup({format:'longxin-backup-v1',chapters:Array(1001).fill({})}));
+ user=null;await assert.rejects(backup.saveCloudBackup(payload),/登录/);user={id:'author'};
+ allowed=false;await assert.rejects(backup.saveCloudBackup(payload),/权限/);allowed=true;
+ await backup.saveCloudBackup(payload);assert.deepEqual(await backup.readCloudBackup('snapshot'),payload);
+ assert.equal((await backup.listCloudBackups()).length,1);await backup.saveCloudBackup(payload);assert.equal(stored.length,2,'Saves append instead of overwriting');
+ fail=true;await assert.rejects(backup.saveCloudBackup(payload),/未确认/);
+ console.log('PASS: private cloud backup authorization, validation, append-only snapshots, lightweight listing, complete payload round trip and network errors.');
+})().catch(e=>{console.error(e);process.exit(1)});
